@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# losely based on https://gist.github.com/tknerr/291b765df23845e56a29
+
+PRE_ANSIBLE_PATH = "ansible/pre-ansible"
+ANSIBLE_PATH = "ansible/arch"
+CREDENTIALS_PATH = "U:/credentials"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "archlinux/archlinux"
+
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.http     = "http://10.0.2.2:3128"
+    config.proxy.https    = "http://10.0.2.2:3128"
+    config.proxy.no_proxy = "localhost,127.0.0.1,.bosch.com"
+  end
+
+  # enabel ssh agent forwarding, to use same ssh key as on host in vagrantbox
+  config.ssh.forward_agent = true
+  # disable the default share, since I got the Vagrantfile under version control in homestow
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 2
+  end
+
+  config.vm.provision "file", source: "#{CREDENTIALS_PATH}/.git-credentials", destination: ".git-credentials"
+  config.vm.provision "shell", privileged: false, inline: "git config --global credential.helper store"
+  config.vm.provision "shell", privileged: false, inline: "git clone https://github.com/benjaminbauer/ansible.git"
+  config.vm.provision "shell", privileged: true, path: "#{PRE_ANSIBLE_PATH}/install_ansible.sh"
+  config.vm.provision "shell", privileged: false, path: "#{ANSIBLE_PATH}/run-ansible-win-10.sh"
+end
