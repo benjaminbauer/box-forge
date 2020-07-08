@@ -1,10 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-PRE_ANSIBLE_PATH = "ansible/pre-ansible"
-ANSIBLE_PATH = "ansible/arch"
-CREDENTIALS_PATH = "U:/credentials"
-
 Vagrant.configure("2") do |config|
   config.vm.box = "archlinux/archlinux"
 
@@ -24,14 +20,14 @@ Vagrant.configure("2") do |config|
     vb.cpus = 2
   end
 
-  config.vm.provision "file", source: "#{CREDENTIALS_PATH}/.git-credentials", destination: ".git-credentials"
-  config.vm.provision "file", source: "#{CREDENTIALS_PATH}/id_rsa", destination: ".ssh/id_rsa"
-  config.vm.provision "file", source: "#{CREDENTIALS_PATH}/id_rsa.pub", destination: ".ssh/id_rsa.pub"
+  config.vm.provision "file", source: "#{ENV["CREDENTIALS_DIR"]}/.git-credentials", destination: ".git-credentials"
+  config.vm.provision "file", source: "#{ENV["CREDENTIALS_DIR"]}/id_rsa", destination: ".ssh/id_rsa"
+  config.vm.provision "file", source: "#{ENV["CREDENTIALS_DIR"]}/id_rsa.pub", destination: ".ssh/id_rsa.pub"
   config.vm.provision "shell", privileged: true, inline: "pacman -Syy"
   config.vm.provision "shell", privileged: true, inline: "pacman -S --noconfirm git"
   config.vm.provision "shell", privileged: false, inline: "git config --global credential.helper store"
   config.vm.provision "shell", privileged: false, inline: "rm -f -r ansible & git clone https://github.com/benjaminbauer/ansible.git"
-  config.vm.provision "shell", privileged: true, inline: "sh #{PRE_ANSIBLE_PATH}/install_ansible.sh"
-  config.vm.provision "shell", privileged: false, inline: "sh #{ANSIBLE_PATH}/run-ansible-win-10.sh"
+  config.vm.provision "shell", privileged: true, inline: "sh ansible/pre-ansible/install_ansible.sh"
+  config.vm.provision "shell", privileged: false, inline: "sh ansible/arch/run-ansible-win-10.sh"
 end
 
