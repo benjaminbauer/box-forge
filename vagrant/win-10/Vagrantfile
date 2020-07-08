@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "#{CREDENTIALS_PATH}/id_rsa", destination: ".ssh/id_rsa"
   config.vm.provision "file", source: "#{CREDENTIALS_PATH}/id_rsa.pub", destination: ".ssh/id_rsa.pub"
   config.vm.provision "shell", privileged: false, inline: "git config --global credential.helper store"
-  config.vm.provision "shell", privileged: false, inline: "git clone https://github.com/benjaminbauer/ansible.git"
+  config.vm.provision "shell", privileged: false, inline: "rm -f -r ansible & git clone https://github.com/benjaminbauer/ansible.git"
   config.vm.provision "shell", privileged: true, path: "#{PRE_ANSIBLE_PATH}/install_ansible.sh"
   config.vm.provision "shell", privileged: false, path: "#{ANSIBLE_PATH}/run-ansible-win-10.sh"
 end
