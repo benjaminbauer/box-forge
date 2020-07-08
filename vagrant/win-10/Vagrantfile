@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: "pacman -Syy"
   config.vm.provision "shell", privileged: true, inline: "pacman -S --noconfirm git"
   config.vm.provision "shell", privileged: false, inline: "git config --global credential.helper store"
-  config.vm.provision "shell", privileged: false, inline: "rm -f -r ansible & git clone https://github.com/benjaminbauer/ansible.git"
+  config.vm.provision "shell", privileged: false, inline: "rm -f -r ansible && git clone https://github.com/benjaminbauer/ansible.git"
   config.vm.provision "shell", privileged: true, inline: "sh ansible/pre-ansible/install_ansible.sh"
   config.vm.provision "shell", privileged: false, inline: "sh ansible/arch/run-ansible-win-10.sh"
 end
